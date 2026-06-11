@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+
 @Configuration
 @EnableWebSecurity
 public class ConfigSecurity {
@@ -26,12 +27,12 @@ public class ConfigSecurity {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        //register
                         .requestMatchers("/api/v1/customer/register").permitAll()
                         .requestMatchers("/api/v1/employee/register").hasAuthority("ADMIN")
 
                         // CUSTOMER
                         .requestMatchers(
+                                "/api/v1/customer/delete",
                                 "/api/v1/account/create",
                                 "/api/v1/account/my-accounts",
                                 "/api/v1/account/details/{accountId}",
@@ -39,6 +40,9 @@ public class ConfigSecurity {
                                 "/api/v1/account/withdraw/{accountId}/{amount}",
                                 "/api/v1/account/transfer/{fromAccountId}/{toAccountNumber}/{amount}"
                         ).hasAuthority("CUSTOMER")
+
+                        // EMPLOYEE
+                        .requestMatchers("/api/v1/employee/delete").hasAuthority("EMPLOYEE")
 
                         // EMPLOYEE , ADMIN
                         .requestMatchers(
@@ -50,9 +54,7 @@ public class ConfigSecurity {
                         // ADMIN
                         .requestMatchers(
                                 "/api/v1/customer/get",
-                                "/api/v1/customer/delete/{customerId}",
-                                "/api/v1/employee/get",
-                                "/api/v1/employee/delete/{employeeId}"
+                                "/api/v1/employee/get"
                         ).hasAuthority("ADMIN")
 
                         .anyRequest().authenticated()
